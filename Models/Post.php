@@ -2,8 +2,10 @@
 namespace Models;
 
 use Providor\DB;
+use Providor\Helper;
+use Models\Model;
 
-class Post
+class Post extends Model
 {
     protected $table_name = 'posts';
 
@@ -11,33 +13,12 @@ class Post
     private $title;
     private $body;
 
-    public static function create($props = [])
+    public static function create($request)
     {
-        $post = new Post();
-        $post->title = $props['title'];
-        $post->body = $props['body'];
-
-        return $post;
+        //$table_name = lcfirst(get_class($this).'s');
+        $sqlBuilder = Helper::insert($request);
     }
 
-    public function id()
-    {
-        return $this->id;
-    }
 
-    public function field($fieldName)
-    {
-        return $this->$fieldName;
-    }
-
-    public function setTitle($value)
-    {
-        $this->title = $value;
-    }
-
-    public function setBody($value)
-    {
-        $this->body = $value;
-    }
 
 }

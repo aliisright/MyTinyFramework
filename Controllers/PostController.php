@@ -24,24 +24,13 @@ class PostController
         require 'views/test.php';
     }
 
-    public static function store($table_name, $request)
+    public static function store(Post $post, $table_name, $request)
     {
-        // $post = new Post();
-        // $post->title = $request['title'];
-        // $post->body = $request['body'];
+        $post = Post::create([
+          'title' => $request['title'],
+          'body' => $request['body']
+        ]);
 
-        // $fields = implode(',', array_keys($request));
-        // $values = Helper::getPreparedStatementValues(array_keys($request));
-        //
-        // $params = [];
-        // foreach($request as $key => $value) {
-        //   $params[':'.$key] = $value;
-        // }
-
-        $sql = "INSERT INTO ".$table_name." (".$fields.") VALUES(".$values.")";
-
-        Helper::sqlBuilder('insert', 'posts', $request);
-
-        DB::insert($sql, $params);
+        //Helper::insert($table_name, $request);
     }
 }

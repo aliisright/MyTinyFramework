@@ -1,6 +1,8 @@
 <?php
 namespace Providor;
 
+use Providor\DB;
+
 class Helper
 {
 
@@ -37,7 +39,7 @@ class Helper
       return $result;
   }
 
-  public static function sqlBuilder($request_type, $table_name, $request)
+  private static function sqlParamsBuilder($request)
   {
       $fields = implode(',', array_keys($request));
       $values = Helper::getPreparedStatementValues(array_keys($request));
@@ -47,6 +49,18 @@ class Helper
         $params[':'.$key] = $value;
       }
 
-      $sql = "INSERT INTO ".$table_name." (".$fields.") VALUES(".$values.")";
+      $array = [
+        'fields' => $fields,
+        'values' => $values,
+        'params' => $params
+      ];
+      return $array;
+  }
+
+  public static function insert($table_name, $request)
+  {
+      $sqlBuilder = Helper::sqlParamsBuilder($request);
+      $sql = "INSERT INTO ".$table_name." (".$sqlBuilder['fields'].") VALUES(".$sqlBuilder['values'].")";
+      DB::insert($sql, $sqlBuilder['params']);
   }
 }

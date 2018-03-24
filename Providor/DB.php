@@ -26,10 +26,7 @@ class DB
         $pdo = DB::connection();
 
         $statement = $pdo->prepare($sql);
-        var_dump($sql);
-        var_dump($params);
         foreach ($params as $key => &$value) {
-          var_dump($key, $value);
           $statement->bindParam($key, $value);
         }
         $statement->execute();
