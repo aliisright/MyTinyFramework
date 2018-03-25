@@ -5,6 +5,8 @@
 //Providors
     //Database
     require 'Providor/DB.php';
+      //QueryBuilder
+      require 'Providor/QueryBuilder.php';
     //Request
     require 'Controllers/Requests/Request.php';
     require 'Controllers/Requests/Getter.php';

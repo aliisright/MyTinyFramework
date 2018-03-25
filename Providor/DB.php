@@ -4,42 +4,48 @@ use PDO;
 
 class DB
 {
-    function __construct()
+    protected $pdo;
+    protected $statement;
+    protected $query;
+    protected $params;
+
+    function __construct($pdo = null)
     {
-      return new DB();
-    }
+        require 'config/db-conf.php';
+        $this->pdo = $pdo;
 
-    public static function connection()
-    {
-      require 'config/db-conf.php';
-
-      try{
-        $pdo = new PDO("mysql:host=$host:$port;dbname=$dbName;charset=$charset", $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-      } catch (Exception $e){
-        die('Erreur: ' . $e->getMessage());
-      }
-      return $pdo;
-    }
-
-    public static function insert($table_name, $request)
-    {
-        $sqlBuilder = DB::sqlParamsBuilder($request);
-        $sql = "INSERT INTO ".$table_name." (".$sqlBuilder['fields'].") VALUES(".$sqlBuilder['values'].")";
-        DB::reqExecute($sql, $sqlBuilder['params']);
-    }
-
-    public static function reqExecute($sql, $params)
-    {
-        $pdo = DB::connection();
-
-        $statement = $pdo->prepare($sql);
-        foreach ($params as $key => &$value) {
-          $statement->bindParam($key, $value);
+        try{
+          $this->pdo = new PDO("mysql:host=$host:$port;dbname=$dbName;charset=$charset", $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+        } catch (Exception $e){
+          die('Erreur: ' . $e->getMessage());
         }
-        $statement->execute();
     }
 
-    private static function sqlParamsBuilder($request)
+
+    
+
+    //Fetch
+    public function getAll()
+    {
+        $sql = $this->query;
+        $params = $this->params;
+        $statement = $this->reqExecute($sql, $params);
+        return $statement->fetchAll();
+    }
+
+    public function first()
+    {
+        $sql = $this->query;
+        $params = $this->params;
+        $statement = $this->reqExecute($sql, $params);
+        return $statement->fetch();
+    }
+
+
+
+
+    //Build parameters for Insert / Update
+    public static function sqlParamsBuilder($request)
     {
         $fields = implode(',', array_keys($request));
         $values = Helper::getPreparedStatementValues(array_keys($request));
@@ -57,4 +63,15 @@ class DB
         return $array;
     }
 
+    private function reqExecute($sql, $params = null)
+    {
+        $this->params = $params;
+        $statement = $this->pdo->prepare($sql);
+        foreach ($this->params as $key => &$value) {
+          $statement->bindParam($key, $value);
+        }
+        $statement->execute();
+        var_dump($statement);
+        return $statement;
+    }
 }

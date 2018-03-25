@@ -3,6 +3,7 @@ namespace Models;
 
 use Providor\Helper;
 use Providor\DB;
+use Providor\QueryBuilder;
 
 class Model
 {
@@ -11,13 +12,49 @@ class Model
     {
         //Getting table name of the calling class
         $table_name = Self::getTableNameStaticCall();
-
-        $sqlBuilder = DB::insert($table_name, $request);
+        $db = new QueryBuilder();
+        $sqlBuilder = $db->insert($table_name, $request);
     }
 
-    public function all()
+    //search by Id and fetch one result
+    public static function find($id)
     {
-      
+        $table_name = Self::getTableNameStaticCall();
+        $db = new QueryBuilder();
+        $results = $db->select($table_name)->where('id', '=', $id)->first();
+        return $results;
+    }
+
+    public static function select($selected_fields = [])
+    {
+        $table_name = Self::getTableNameStaticCall();
+        $db = new QueryBuilder();
+        $results = $db->select($table_name, $selected_fields);
+        return $results;
+    }
+
+    public static function all()
+    {
+        $table_name = Self::getTableNameStaticCall();
+        $db = new QueryBuilder();
+        $results = $db->select($table_name)->getAll();
+        return $results;
+    }
+
+    public static function first()
+    {
+        $table_name = Self::getTableNameStaticCall();
+        $db = new QueryBuilder();
+        $results = $db->select($table_name)->first();
+        return $results;
+    }
+
+    public static function where($field_name, $operator, $value)
+    {
+        $table_name = Self::getTableNameStaticCall();
+        $db = new QueryBuilder();
+        $results = $db->select($table_name)->where($field_name, $operator, $value)->getAll();
+        return $results;
     }
 
     //class and table names getters
