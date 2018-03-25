@@ -2,10 +2,14 @@
 require 'Providor/AppProvidor.php';
 use Controllers\PostController;
 use Models\Post;
-use Providor\DB;
+use Providor\QueryBuilder;
+use Providor\Model;
 
 PostController::create();
 
-var_dump(Post::select(['title'])->where('id', '>', '1')->where('title', '=', 'dd')->where('body', '=', 'sdsd')->getAll());
+
+$posts = Post::where('id', '<', '50')->getAll();
+
+var_dump($posts);
 
 ?>

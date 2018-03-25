@@ -32,4 +32,24 @@ class PostController
           'body' => $request->input('body')
         ]);
     }
+
+    public static function edit()
+    {
+        if(Helper::postRequestCatcher()) {PostController::update(Helper::postRequestCatcher());}
+        return render('views.test');
+    }
+
+    public static function update(Request $request, $id)
+    {
+        $post = Post::update([
+          'title' => $request->input('title'),
+          'body' => $request->input('body')
+        ])->where('id', '=', $id)->set();
+    }
+
+    public static function destroy($id)
+    {
+        $post = Post::where('id', '=', $id)->first();
+        $post->destroy()->set();
+    }
 }
