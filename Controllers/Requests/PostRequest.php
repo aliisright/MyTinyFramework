@@ -2,13 +2,10 @@
 namespace Requests;
 
 use Providor\Helper;
-class PostRequest
-{
+use Requests\Request;
 
-  function __construct()
-  {
-    return new PostRequest();
-  }
+class PostRequest extends Request
+{
 
   public static function create()
   {
@@ -22,5 +19,10 @@ class PostRequest
         ];
       }
       return $array;
+  }
+
+  public function post($request)
+  {
+
   }
 }

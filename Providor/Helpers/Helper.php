@@ -2,6 +2,8 @@
 namespace Providor;
 
 use Providor\DB;
+use Requests\Request;
+use Requests\Getter;
 
 class Helper
 {
@@ -39,28 +41,28 @@ class Helper
       return $result;
   }
 
-  private static function sqlParamsBuilder($request)
+  public static function fileLinkBuilder($file_path)
   {
-      $fields = implode(',', array_keys($request));
-      $values = Helper::getPreparedStatementValues(array_keys($request));
-
-      $params = [];
-      foreach($request as $key => $value) {
-        $params[':'.$key] = $value;
-      }
-
-      $array = [
-        'fields' => $fields,
-        'values' => $values,
-        'params' => $params
-      ];
-      return $array;
+    //Convert the file path format from (ex: view.home) to (view/home.php)
+    $real_path = str_replace('.','/',$file_path).'.php';
+    return $real_path;
   }
 
-  public static function insert($table_name, $request)
+  public static function postRequestCatcher()
   {
-      $sqlBuilder = Helper::sqlParamsBuilder($request);
-      $sql = "INSERT INTO ".$table_name." (".$sqlBuilder['fields'].") VALUES(".$sqlBuilder['values'].")";
-      DB::insert($sql, $sqlBuilder['params']);
+      //returns a Request object
+      if(!empty($_POST)) {
+        $request = new Request($_POST);
+        return $request;
+      }
+  }
+
+  public static function getRequestCatcher()
+  {
+      //returns a Getter object
+      if(!empty($_GET)) {
+        $getter = new Getter($_GET);
+        return $getter;
+      }
   }
 }

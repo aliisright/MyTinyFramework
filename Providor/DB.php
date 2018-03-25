@@ -21,7 +21,14 @@ class DB
       return $pdo;
     }
 
-    public static function insert($sql, $params)
+    public static function insert($table_name, $request)
+    {
+        $sqlBuilder = DB::sqlParamsBuilder($request);
+        $sql = "INSERT INTO ".$table_name." (".$sqlBuilder['fields'].") VALUES(".$sqlBuilder['values'].")";
+        DB::reqExecute($sql, $sqlBuilder['params']);
+    }
+
+    public static function reqExecute($sql, $params)
     {
         $pdo = DB::connection();
 
@@ -30,6 +37,24 @@ class DB
           $statement->bindParam($key, $value);
         }
         $statement->execute();
+    }
+
+    private static function sqlParamsBuilder($request)
+    {
+        $fields = implode(',', array_keys($request));
+        $values = Helper::getPreparedStatementValues(array_keys($request));
+
+        $params = [];
+        foreach($request as $key => $value) {
+          $params[':'.$key] = $value;
+        }
+
+        $array = [
+          'fields' => $fields,
+          'values' => $values,
+          'params' => $params
+        ];
+        return $array;
     }
 
 }

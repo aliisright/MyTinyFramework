@@ -2,7 +2,7 @@
 namespace Controllers;
 
 use Providor\Helper;
-use Requests\PostRequest;
+use Requests\Request;
 use Models\Post;
 use Providor\DB;
 
@@ -14,23 +14,22 @@ class PostController
     private $title;
     private $body;
 
-    public static function create()
+    public static function index()
     {
-        $request = PostRequest::create();
-        if($request) {
-          PostController::store('posts', $request);
-        }
-
-        require 'views/test.php';
+        return render('views/test.php');
     }
 
-    public static function store(Post $post, $table_name, $request)
+    public static function create()
     {
-        $post = Post::create([
-          'title' => $request['title'],
-          'body' => $request['body']
-        ]);
+        if(Helper::postRequestCatcher()) {PostController::store(Helper::postRequestCatcher());}
+        return render('views.test');
+    }
 
-        //Helper::insert($table_name, $request);
+    public static function store(Request $request)
+    {
+        $post = Post::save([
+          'title' => $request->input('title'),
+          'body' => $request->input('body')
+        ]);
     }
 }
